@@ -13,6 +13,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { SongProfile } from './components/SongProfile';
 import { Song, GenerationParams, View, Playlist } from './types';
 import { generateApi, songsApi, playlistsApi, getAudioUrl } from './services/api';
+import { generateCoverUrl } from './utils/cover';
 import { useAuth } from './context/AuthContext';
 import { useResponsive } from './context/ResponsiveContext';
 import { I18nProvider, useI18n } from './context/I18nContext';
@@ -313,7 +314,7 @@ function AppContent() {
           title: s.title,
           lyrics: s.lyrics,
           style: s.style,
-          coverUrl: `https://picsum.photos/seed/${s.id}/400/400`,
+          coverUrl: generateCoverUrl(s.id),
           duration: s.duration && s.duration > 0 ? `${Math.floor(s.duration / 60)}:${String(Math.floor(s.duration % 60)).padStart(2, '0')}` : '0:00',
           createdAt: new Date(s.created_at || s.createdAt),
           tags: s.tags || [],
@@ -652,7 +653,7 @@ function AppContent() {
         title: s.title,
         lyrics: s.lyrics,
         style: s.style,
-        coverUrl: `https://picsum.photos/seed/${s.id}/400/400`,
+        coverUrl: generateCoverUrl(s.id),
         duration: s.duration && s.duration > 0 ? `${Math.floor(s.duration / 60)}:${String(Math.floor(s.duration % 60)).padStart(2, '0')}` : '0:00',
         createdAt: new Date(s.created_at),
         tags: s.tags || [],
@@ -758,7 +759,7 @@ function AppContent() {
     title: params.title || 'Generating...',
     lyrics: '',
     style: params.style || params.songDescription || '',
-    coverUrl: 'https://picsum.photos/200/200?blur=10',
+    coverUrl: generateCoverUrl(`pending_${Date.now()}`),
     duration: '--:--',
     createdAt: createdAt ? new Date(createdAt) : new Date(),
     isGenerating: true,
@@ -784,7 +785,7 @@ function AppContent() {
       title: params.title || 'Generating...',
       lyrics: '',
       style: params.style,
-      coverUrl: 'https://picsum.photos/200/200?blur=10',
+      coverUrl: generateCoverUrl(`pending_${Date.now()}`),
       duration: '--:--',
       createdAt: new Date(),
       isGenerating: true,
