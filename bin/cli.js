@@ -5,6 +5,11 @@
  *
  * Starts the Express backend server in production mode.
  * The built frontend (dist/) is served as static content by the server.
+ *
+ * SCOPE: This is the lightweight npx launcher — it starts the server and
+ * exits. It is NOT the full site-management CLI planned in Issue #1
+ * (start/stop/status/health/logs). That lives in a separate bin/* file
+ * when implemented.
  */
 
 import { existsSync } from 'fs';
