@@ -1,0 +1,41 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# JavaScript/TypeScript source
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+
+# Web
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Config
+*.env text eol=lf
+*.env.example text eol=lf
+*.toml text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.wasm binary
+*.mp3 binary
+*.mp4 binary
+*.flac binary
+*.wav binary
+*.ogg binary
+*.ttf binary
+*.woff binary
+*.eot binary
