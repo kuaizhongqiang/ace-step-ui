@@ -1,29 +1,43 @@
 ---
 name: Bug Report
-about: Create a bug report
+about: Create a report to help us improve
 title: '[Bug] '
 labels: bug
 assignees: ''
 ---
 
-**Describe the bug**
-A clear description of what went wrong.
+## Describe the Bug
 
-**To Reproduce**
+A clear and concise description of what the bug is.
+
+## To Reproduce
+
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '...'
-3. See error
+3. Scroll down to '...'
+4. See error
 
-**Expected behavior**
-What you expected to happen.
+## Expected Behavior
 
-**Environment:**
-- Node version:
-- OS:
-- GPU model & VRAM:
+What you expected to happen instead.
 
-**Logs**
+## Screenshots / Logs
+
+If applicable, add screenshots or paste relevant server/browser console logs.
+
 ```
-Paste relevant server or browser logs here
+Paste logs here
 ```
+
+## Environment
+
+- **OS:** [e.g. Windows 10, Ubuntu 22.04]
+- **Node.js version:** [e.g. 18, 20]
+- **GPU model & VRAM:** [e.g. RTX 3060 12GB]
+- **ACE-Step version/branch:** [e.g. main, v1.5]
+- **Browser:** [e.g. Chrome 120, Edge 120]
+
+## Additional Context
+
+Add any other context about the problem here (e.g. did it work before? any recent changes?).
