@@ -1,20 +1,36 @@
 {
   "name": "ace-step-ui",
-  "private": true,
   "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "ace-step-ui": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "server/src",
+    "server/public",
+    "server/audio-editor",
+    "server/scripts",
+    "server/package.json",
+    "server/.env.example"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "cd server && npx tsx src/index.ts & npm run dev"
+    "start": "node bin/cli.js",
+    "dev:start": "cd server && npx tsx src/index.ts & npm run dev",
+    "postinstall": "cd server && npm install --ignore-scripts 2>/dev/null || true",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "tsx": "^4.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

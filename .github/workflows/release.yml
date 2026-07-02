@@ -6,10 +6,11 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write # needed for npm provenance
 
     steps:
       - uses: actions/checkout@v4
@@ -20,11 +21,13 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      - run: cd server && npm ci
+      - name: Build frontend
+        run: npm run build
 
       - name: Generate Changelog
         id: changelog
@@ -33,6 +36,14 @@ jobs:
           config: cliff.toml
           args: --verbose --latest
 
+      # ── Dual Publish ──────────────────────────────────────────
+      # 1. npm — so users can `npx ace-step-ui` or `npm i -g ace-step-ui`
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 2. GitHub Release — downloadable artifacts for manual / offline installs
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

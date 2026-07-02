@@ -7,6 +7,32 @@ on:
     branches: [main]
 
 jobs:
+  # Conventional commit check for PR titles
+  commitlint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate PR title follows conventional commits
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$TITLE" | grep -qE '^(feat|fix|chore|docs|refactor|perf|ci|test|style|revert)(\(.+\))?!?: .+'; then
+            echo "✅ PR title follows conventional commit format"
+          else
+            echo "❌ PR title does not follow conventional commit format"
+            echo ""
+            echo "Expected: type(scope): description"
+            echo "  types: feat, fix, chore, docs, refactor, perf, ci, test, style, revert"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new generation mode"
+            echo "  fix(player): resolve seek issue on mobile"
+            echo "  chore(deps): update better-sqlite3"
+            echo ""
+            exit 1
+          fi
+
   lint-and-typecheck:
     runs-on: ubuntu-latest
     steps:
@@ -17,7 +43,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
       - name: TypeScript type-check
         run: npx tsc --noEmit
@@ -36,7 +63,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: server/package-lock.json
 
-      - run: cd server && npm ci
+      - name: Install server dependencies
+        run: cd server && npm ci
 
       - name: TypeScript type-check (server)
         run: cd server && npx tsc --noEmit
