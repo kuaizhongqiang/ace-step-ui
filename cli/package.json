@@ -1,0 +1,15 @@
+{
+  "name": "ace-step-ui-cli",
+  "version": "1.0.0",
+  "description": "ACE-Step UI CLI — Server management tool",
+  "type": "module",
+  "bin": {
+    "ace-step-ui": "./cli.mjs"
+  },
+  "dependencies": {
+    "ace-step-ui-server": "1.0.0"
+  },
+  "files": [
+    "cli.mjs"
+  ]
+}

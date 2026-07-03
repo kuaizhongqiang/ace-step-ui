@@ -31,5 +31,15 @@
     "@types/uuid": "^9.0.7",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
-  }
+  },
+  "bin": {
+    "ace-step-ui": "../cli.mjs"
+  },
+  "files": [
+    "src/",
+    "cli.mjs",
+    "public/",
+    "scripts/",
+    ".env.example"
+  ]
 }
