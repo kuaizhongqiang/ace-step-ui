@@ -105,7 +105,7 @@ function parseArgs(argv) {
 // ── Utilities ───────────────────────────────────────────────────────────────
 function print(msg) { process.stdout.write(msg); }
 function printVersion() {
-  const pkgPath = join(__dirname, '..', 'package.json');
+  const pkgPath = join(__dirname, 'package.json');
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
   print(`ACE-Step UI v${pkg.version} (node ${process.version})\n`);
 }

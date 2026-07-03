@@ -1,6 +1,6 @@
 {
   "name": "ace-step-ui-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ACE-Step UI CLI — Server management tool",
   "type": "module",
   "bin": {
