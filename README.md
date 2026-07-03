@@ -48,10 +48,16 @@ graph LR
 ### 安装
 
 ```bash
+# npm 全局安装（推荐，三合一）
+npm install -g ace-step-ui-cli ace-step-ui-server ace-step-ui-ui
+ace-step-ui start --port 3001
+
+# 或 Git 克隆
 git clone https://github.com/kuaizhongqiang/ace-step-ui.git
 cd ace-step-ui
 npm install
 cp .env.example .env
+node server/cli.mjs dev
 ```
 
 ### 配置 `.env`
@@ -59,7 +65,6 @@ cp .env.example .env
 ```env
 PORT=3001                    # 后端端口
 ACESTEP_API_URL=http://localhost:7860  # ACE-Step Gradio API
-JWT_SECRET=your-secret       # JWT 密钥（本地使用可随意）
 DEEPSEEK_API_KEY=sk-xxx      # DeepSeek API Key（可选）
 ```
 
@@ -106,7 +111,7 @@ node server/cli.mjs list styles # 列出风格
 
 SQLite (WAL 模式)，自动迁移。
 
-主要表：`songs`, `playlists`, `playlist_songs`, `likes`, `comments`, `users`, `generation_jobs`, `reference_tracks`
+主要表：`songs`, `playlists`, `playlist_songs`, `likes`, `comments`, `generation_jobs`, `reference_tracks`
 
 ## 🔧 开发
 
@@ -119,4 +124,4 @@ cd server && npx tsc --noEmit  # 后端类型检查
 
 ## 📄 许可证
 
-MIT · 原仓库作者 [Ambsd](https://github.com/fspecii) · Fork 维护 [kuaizhongqiang](https://github.com/kuaizhongqiang)
+MIT · Copyright (c) 2026 [kuaizhongqiang](https://github.com/kuaizhongqiang) · 原仓库 [Ambsd](https://github.com/fspecii)
