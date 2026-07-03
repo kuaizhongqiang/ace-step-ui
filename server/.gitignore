@@ -3,3 +3,4 @@ dist/
 !audio-editor/dist/
 .env
 *.log
+logs/
