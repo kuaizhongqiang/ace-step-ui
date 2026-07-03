@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { useResponsive } from '../context/ResponsiveContext';
 import { useI18n } from '../context/I18nContext';
 import { SongDropdownMenu } from './SongDropdownMenu';
-import { ShareModal } from './ShareModal';
 import { AlbumCover } from './AlbumCover';
 
 interface PlayerProps {
@@ -326,11 +325,7 @@ export const Player: React.FC<PlayerProps> = ({
                         </div>
                     )}
 
-                    <ShareModal
-                        isOpen={shareModalOpen}
-                        onClose={() => setShareModalOpen(false)}
-                        song={currentSong}
-                    />
+                    
                 </div>
             );
         }
