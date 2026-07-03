@@ -12,7 +12,10 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(() => {
     const stored = localStorage.getItem('language') as Language;
-    return stored === 'zh' || stored === 'en' || stored === 'ja' || stored === 'ko' ? stored : 'en';
+    if (stored === 'zh' || stored === 'en' || stored === 'ja' || stored === 'ko') return stored;
+    // Detect browser language for Chinese users
+    const browserLang = typeof navigator !== 'undefined' ? navigator.language : '';
+    return browserLang.startsWith('zh') ? 'zh' : 'en';
   });
 
   const handleSetLanguage = (lang: Language) => {
