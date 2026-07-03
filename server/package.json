@@ -1,6 +1,6 @@
 {
   "name": "ace-step-ui-server",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -33,7 +33,7 @@
     "typescript": "^5.3.3"
   },
   "bin": {
-    "ace-step-ui": "../cli.mjs"
+    "ace-step-ui": "./cli.mjs"
   },
   "files": [
     "src/",
