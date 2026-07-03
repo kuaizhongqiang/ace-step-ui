@@ -32,7 +32,7 @@ jobs:
 
       # ── Publish: ace-step-ui-ui (frontend) ─────────────────────
       - name: Publish UI to npm
-        run: npm publish --provenance --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -41,29 +41,33 @@ jobs:
         working-directory: server
         run: |
           npm ci --ignore-scripts 2>/dev/null || true
-          npm publish --provenance --access public
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # ── Publish: ace-step-ui-cli ───────────────────────────────
       - name: Publish CLI
         working-directory: cli
-        run: npm publish --provenance --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # ── GitHub Release ──────────────────────────────────────────
       - name: Generate Changelog
         id: changelog
-        uses: orhun/git-cliff-action@v3
-        with:
-          config: cliff.toml
-          args: --verbose --latest
+        run: |
+          {
+            echo "# v${GITHUB_REF_NAME}"
+            echo ""
+            echo "## Changes"
+            git log --oneline --no-decorate $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || git log --oneline -10
+          } > CHANGELOG.md
+          cat CHANGELOG.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.content }}
+          body_path: CHANGELOG.md
           files: |
             dist/**
             server/**
