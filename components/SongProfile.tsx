@@ -4,7 +4,6 @@ import { songsApi, getAudioUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { ArrowLeft, Play, Pause, Heart, Share2, MoreHorizontal, ThumbsDown, Music as MusicIcon, Edit3, Eye } from 'lucide-react';
-import { ShareModal } from './ShareModal';
 import { SongDropdownMenu } from './SongDropdownMenu';
 
 interface SongProfileProps {
@@ -87,8 +86,7 @@ export const SongProfile: React.FC<SongProfileProps> = ({ songId, onBack, onPlay
     const { t } = useI18n();
     const [song, setSong] = useState<Song | null>(null);
     const [loading, setLoading] = useState(true);
-    const [shareModalOpen, setShareModalOpen] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false);
+        const [showDropdown, setShowDropdown] = useState(false);
 
     const isCurrentSong = song && currentSong?.id === song.id;
     const isCurrentlyPlaying = isCurrentSong && isPlaying;
@@ -281,7 +279,6 @@ export const SongProfile: React.FC<SongProfileProps> = ({ songId, onBack, onPlay
                                 </button>
                             )}
                             <button
-                                onClick={() => setShareModalOpen(true)}
                                 className="p-2 bg-zinc-200 dark:bg-zinc-900 hover:bg-zinc-300 dark:hover:bg-zinc-800 rounded-full transition-colors"
                             >
                                 <Share2 size={16} className="text-zinc-700 dark:text-white" />
@@ -302,7 +299,6 @@ export const SongProfile: React.FC<SongProfileProps> = ({ songId, onBack, onPlay
                                         onReusePrompt={() => {}}
                                         onAddToPlaylist={() => {}}
                                         onDelete={() => onDelete?.(song)}
-                                        onShare={() => setShareModalOpen(true)}
                                     />
                                 )}
                             </div>
@@ -322,13 +318,6 @@ export const SongProfile: React.FC<SongProfileProps> = ({ songId, onBack, onPlay
                 </div>
             </div>
 
-            {song && (
-                <ShareModal
-                    isOpen={shareModalOpen}
-                    onClose={() => setShareModalOpen(false)}
-                    song={song}
-                />
-            )}
         </div>
     );
 };

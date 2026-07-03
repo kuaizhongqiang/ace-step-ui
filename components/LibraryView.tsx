@@ -3,7 +3,6 @@ import { Song, Playlist } from '../types';
 import { Heart, Plus, Music, Play, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { SongDropdownMenu } from './SongDropdownMenu';
-import { ShareModal } from './ShareModal';
 import { AlbumCover } from './AlbumCover';
 import { useI18n } from '../context/I18nContext';
 
@@ -50,9 +49,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
     const { t } = useI18n();
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<'all' | 'playlists' | 'liked' | 'uploads'>('all');
-    const [shareModalOpen, setShareModalOpen] = useState(false);
-    const [shareSong, setShareSong] = useState<Song | null>(null);
-
+        
     const formatBytes = (bytes?: number | null) => {
         if (!bytes || bytes <= 0) return '0 B';
         const units = ['B', 'KB', 'MB', 'GB'];
@@ -139,23 +136,20 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                                         className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-white/5 text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setShareSong(prev => prev?.id === song.id ? null : song);
+                                            ;
                                         }}
                                     >
                                         <MoreHorizontal size={16} />
                                     </button>
                                     <SongDropdownMenu
                                         song={song}
-                                        isOpen={shareSong?.id === song.id}
-                                        onClose={() => setShareSong(null)}
-                                        isOwner={user ? song.userId === user.id : false}
+                                        isOpen={false}
+                                        isOwner={false}
                                         onCreateVideo={() => onOpenVideo?.(song)}
                                         onReusePrompt={() => onReusePrompt?.(song)}
                                         onAddToPlaylist={() => onAddToPlaylist(song)}
                                         onDelete={() => onDeleteSong?.(song)}
-                                        onShare={() => {
-                                            setShareModalOpen(true);
-                                        }}
+                                        
                                     />
                                 </div>
                             </div>
@@ -207,23 +201,20 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                                         className="p-2 rounded-full hover:bg-zinc-200 dark:hover:bg-white/5 text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            setShareSong(prev => prev?.id === song.id ? null : song);
+                                            ;
                                         }}
                                     >
                                         <MoreHorizontal size={16} />
                                     </button>
                                     <SongDropdownMenu
                                         song={song}
-                                        isOpen={shareSong?.id === song.id}
-                                        onClose={() => setShareSong(null)}
-                                        isOwner={user ? song.userId === user.id : false}
+                                        isOpen={false}
+                                        isOwner={false}
                                         onCreateVideo={() => onOpenVideo?.(song)}
                                         onReusePrompt={() => onReusePrompt?.(song)}
                                         onAddToPlaylist={() => onAddToPlaylist(song)}
                                         onDelete={() => onDeleteSong?.(song)}
-                                        onShare={() => {
-                                            setShareModalOpen(true);
-                                        }}
+                                        
                                     />
                                 </div>
                             </div>
@@ -277,13 +268,6 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                  </div>
              )}
         </div>
-        {shareSong && (
-            <ShareModal
-                isOpen={shareModalOpen}
-                onClose={() => { setShareModalOpen(false); setShareSong(null); }}
-                song={shareSong}
-            />
-        )}
         </>
     );
 };

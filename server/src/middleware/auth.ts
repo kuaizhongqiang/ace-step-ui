@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { config } from '../config/index.js';
 import { pool } from '../db/pool.js';
 
 export interface AuthenticatedUser {
@@ -13,46 +11,42 @@ export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
 }
 
-export function authMiddleware(
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): void {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({ error: 'No token provided' });
-    return;
-  }
-
-  const token = authHeader.substring(7);
-
+// Local single-user mode - always use the first user in the database
+async function getDefaultUser(): Promise<AuthenticatedUser | null> {
   try {
-    const decoded = jwt.verify(token, config.jwt.secret) as AuthenticatedUser;
-    req.user = decoded;
-    next();
+    const result = await pool.query(
+      'SELECT id, username, is_admin FROM users ORDER BY created_at ASC LIMIT 1'
+    );
+    if (result.rows.length === 0) return null;
+    const u = result.rows[0];
+    return { id: u.id, username: u.username, isAdmin: Boolean(u.is_admin) };
   } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
+    return null;
   }
 }
 
-export function optionalAuthMiddleware(
+// Simplified auth middleware for local mode - assigns default user
+export async function authMiddleware(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): void {
-  const authHeader = req.headers.authorization;
-
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7);
-    try {
-      const decoded = jwt.verify(token, config.jwt.secret) as AuthenticatedUser;
-      req.user = decoded;
-    } catch {
-      // Token invalid, but continue without user
-    }
+): Promise<void> {
+  const user = await getDefaultUser();
+  if (!user) {
+    res.status(503).json({ error: 'No user configured. Run server setup first.' });
+    return;
   }
+  req.user = user;
+  next();
+}
 
+// No-auth variant for public endpoints
+export async function optionalAuthMiddleware(
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction
+): Promise<void> {
+  req.user = (await getDefaultUser()) || undefined;
   next();
 }
 
@@ -61,31 +55,11 @@ export async function adminMiddleware(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({ error: 'No token provided' });
+  const user = await getDefaultUser();
+  if (!user || !user.isAdmin) {
+    res.status(403).json({ error: 'Admin access required' });
     return;
   }
-
-  const token = authHeader.substring(7);
-
-  try {
-    const decoded = jwt.verify(token, config.jwt.secret) as AuthenticatedUser;
-
-    const result = await pool.query(
-      'SELECT is_admin FROM users WHERE id = ?',
-      [decoded.id]
-    );
-
-    if (result.rows.length === 0 || !result.rows[0].is_admin) {
-      res.status(403).json({ error: 'Admin access required' });
-      return;
-    }
-
-    req.user = { ...decoded, isAdmin: true };
-    next();
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
-  }
+  req.user = user;
+  next();
 }

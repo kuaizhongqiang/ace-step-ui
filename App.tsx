@@ -7,8 +7,6 @@ import { Player } from './components/Player';
 import { LibraryView } from './components/LibraryView';
 import { CreatePlaylistModal, AddToPlaylistModal } from './components/PlaylistModals';
 import { VideoGeneratorModal } from './components/VideoGeneratorModal';
-import { UsernameModal } from './components/UsernameModal';
-import { UserProfile } from './components/UserProfile';
 import { SettingsModal } from './components/SettingsModal';
 import { SongProfile } from './components/SongProfile';
 import { Song, GenerationParams, View, Playlist } from './types';
@@ -32,9 +30,8 @@ function AppContent() {
   // Responsive
   const { isMobile, isDesktop } = useResponsive();
 
-  // Auth
-  const { user, token, isAuthenticated, isLoading: authLoading, setupUser, logout } = useAuth();
-  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  // Auth (local single-user mode)
+  const { token } = useAuth();
   // Track multiple concurrent generation jobs
   const activeJobsRef = useRef<Map<string, { tempId: string; pollInterval: ReturnType<typeof setInterval> }>>(new Map());
   const [activeJobCount, setActiveJobCount] = useState(0);
@@ -95,9 +92,6 @@ function AppContent() {
   // Settings Modal
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  // Profile View
-  const [viewingUsername, setViewingUsername] = useState<string | null>(null);
-
   // Song View
   const [viewingSongId, setViewingSongId] = useState<string | null>(null);
 
@@ -149,13 +143,6 @@ function AppContent() {
     setToast(prev => ({ ...prev, isVisible: false }));
   };
 
-  // Show username modal if not authenticated and not loading
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      setShowUsernameModal(true);
-    }
-  }, [authLoading, isAuthenticated]);
-
   // Load Playlists
   useEffect(() => {
     if (token) {
@@ -204,19 +191,9 @@ function AppContent() {
     }
   };
 
-  // Navigate to Profile Handler
-  const handleNavigateToProfile = (username: string) => {
-    setViewingUsername(username);
-    setCurrentView('profile');
-    window.history.pushState({}, '', `/@${username}`);
-  };
-
-  // Back from Profile Handler
-  const handleBackFromProfile = () => {
-    setViewingUsername(null);
-    setCurrentView('create');
-    window.history.pushState({}, '', '/');
-  };
+  // Navigate to Profile Handler (noop - users removed in local mode)
+  const handleNavigateToProfile = (_username: string) => {};
+  const handleBackFromProfile = () => {};
 
   // Navigate to Song Handler
   const handleNavigateToSong = (songId: string) => {
@@ -266,12 +243,6 @@ function AppContent() {
         setMobileShowList(false);
       } else if (path === '/library') {
         setCurrentView('library');
-      } else if (path.startsWith('/@')) {
-        const username = path.substring(2);
-        if (username) {
-          setViewingUsername(username);
-          setCurrentView('profile');
-        }
       } else if (path.startsWith('/song/')) {
         const songId = path.substring(6);
         if (songId) {
@@ -299,7 +270,7 @@ function AppContent() {
 
   // Load Songs Effect
   useEffect(() => {
-    if (!isAuthenticated || !token) return;
+    if (!token) return;
 
     const loadSongs = async () => {
       try {
@@ -356,10 +327,10 @@ function AppContent() {
     };
 
     loadSongs();
-  }, [isAuthenticated, token]);
+  }, [token]);
 
   const loadReferenceTracks = useCallback(async () => {
-    if (!isAuthenticated || !token) return;
+    if (!token) return;
     try {
       const response = await fetch('/api/reference-tracks', {
         headers: { Authorization: `Bearer ${token}` }
@@ -370,7 +341,7 @@ function AppContent() {
     } catch (error) {
       console.error('Failed to load reference tracks:', error);
     }
-  }, [isAuthenticated, token]);
+  }, [token]);
 
   // Load reference tracks for Library
   useEffect(() => {
@@ -768,10 +739,7 @@ function AppContent() {
 
   // Handlers
   const handleGenerate = async (params: GenerationParams) => {
-    if (!isAuthenticated || !token) {
-      setShowUsernameModal(true);
-      return;
-    }
+    if (!token) return;
 
     setIsGenerating(true);
     setCurrentView('create');
@@ -870,7 +838,7 @@ function AppContent() {
 
   // Resume active jobs on refresh so progress keeps updating
   useEffect(() => {
-    if (!isAuthenticated || !token) return;
+    if (!token) return;
 
     const resumeJobs = async () => {
       try {
@@ -919,7 +887,7 @@ function AppContent() {
     };
 
     resumeJobs();
-  }, [isAuthenticated, token, beginPollingJob]);
+  }, [token, beginPollingJob]);
 
   const togglePlay = () => {
     if (!currentSong) return;
@@ -1203,20 +1171,13 @@ function AppContent() {
     setIsVideoModalOpen(true);
   };
 
-  // Handle username setup
-  const handleUsernameSubmit = async (username: string) => {
-    await setupUser(username);
-    setShowUsernameModal(false);
-  };
-
   // Render Layout Logic
   const renderContent = () => {
     switch (currentView) {
       case 'library': {
-        const allSongs = user ? songs.filter(s => s.userId === user.id) : [];
         return (
           <LibraryView
-            allSongs={allSongs}
+            allSongs={songs}
             likedSongs={songs.filter(s => likedSongIds.has(s.id))}
             playlists={playlists}
             referenceTracks={referenceTracks}
@@ -1234,22 +1195,6 @@ function AppContent() {
           />
         );
       }
-
-      case 'profile':
-        if (!viewingUsername) return null;
-        return (
-          <UserProfile
-            username={viewingUsername}
-            onBack={handleBackFromProfile}
-            onPlaySong={playSong}
-            onNavigateToProfile={handleNavigateToProfile}
-            onNavigateToPlaylist={handleNavigateToPlaylist}
-            currentSong={currentSong}
-            isPlaying={isPlaying}
-            likedSongIds={likedSongIds}
-            onToggleLike={toggleLike}
-          />
-        );
 
       case 'playlist':
         if (!viewingPlaylistId) return null;
@@ -1405,9 +1350,6 @@ function AppContent() {
           }}
           theme={theme}
           onToggleTheme={toggleTheme}
-          user={user}
-          onLogin={() => setShowUsernameModal(true)}
-          onLogout={logout}
           onOpenSettings={() => setShowSettingsModal(true)}
           isOpen={showLeftSidebar}
           onToggle={() => setShowLeftSidebar(!showLeftSidebar)}
@@ -1471,10 +1413,6 @@ function AppContent() {
         isOpen={isVideoModalOpen}
         onClose={() => setIsVideoModalOpen(false)}
         song={songForVideo}
-      />
-      <UsernameModal
-        isOpen={showUsernameModal}
-        onSubmit={handleUsernameSubmit}
       />
       <SettingsModal
         isOpen={showSettingsModal}
