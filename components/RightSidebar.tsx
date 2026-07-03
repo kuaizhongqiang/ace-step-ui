@@ -5,7 +5,6 @@ import { songsApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { SongDropdownMenu } from './SongDropdownMenu';
-import { ShareModal } from './ShareModal';
 import { AlbumCover } from './AlbumCover';
 
 interface RightSidebarProps {
@@ -31,8 +30,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ song, onClose, onOpe
     const [showMenu, setShowMenu] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
     const [tagsExpanded, setTagsExpanded] = useState(false);
-    const [shareModalOpen, setShareModalOpen] = useState(false);
-    const [copiedStyle, setCopiedStyle] = useState(false);
+        const [copiedStyle, setCopiedStyle] = useState(false);
     const [copiedLyrics, setCopiedLyrics] = useState(false);
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [titleDraft, setTitleDraft] = useState('');
@@ -266,7 +264,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ song, onClose, onOpe
                                     onReusePrompt={() => onReuse?.(song)}
                                     onDelete={() => onDelete?.(song)}
                                     onAddToPlaylist={() => onAddToPlaylist?.(song)}
-                                    onShare={() => setShareModalOpen(true)}
                                 />
                             </div>
                         </div>
@@ -339,7 +336,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ song, onClose, onOpe
                                 active={isLiked}
                                 onClick={() => onToggleLike?.(song.id)}
                             />
-                            <ActionButton icon={<Share2 size={22} />} onClick={() => setShareModalOpen(true)} />
+                            <ActionButton icon={<Share2 size={22} />} />
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -535,13 +532,6 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ song, onClose, onOpe
                 </div>
             </div>
 
-            {song && (
-                <ShareModal
-                    isOpen={shareModalOpen}
-                    onClose={() => setShareModalOpen(false)}
-                    song={song}
-                />
-            )}
         </div>
     );
 };
