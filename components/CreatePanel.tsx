@@ -347,21 +347,10 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({
     }
   }, [showModelMenu]);
 
-  // Auto-unload LoRA when model changes
+  // Track previous model for change detection
   useEffect(() => {
-    if (previousModelRef.current !== selectedModel && loraLoaded) {
-      void handleLoraUnload();
-    }
     previousModelRef.current = selectedModel;
-  }, [selectedModel, loraLoaded]);
+  }, [selectedModel]);
 
-  // Auto-disable thinking and ADG when LoRA is loaded
-  useEffect(() => {
-    if (loraLoaded) {
-      if (thinking) setThinking(false);
-      if (useAdg) setUseAdg(false);
-    }
-  }, [loraLoaded]);
 
-  
 };
