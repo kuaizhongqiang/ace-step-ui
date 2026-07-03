@@ -21,6 +21,12 @@ export const config = {
     apiUrl: process.env.ACESTEP_API_URL || 'http://localhost:8001',
   },
 
+  // DeepSeek API (replaces local LLM)
+  deepseek: {
+    apiKey: process.env.DEEPSEEK_API_KEY || '',
+    model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+  },
+
   // Frontend URL
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
 
