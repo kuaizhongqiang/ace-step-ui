@@ -21,7 +21,6 @@ import { List } from 'lucide-react';
 import { PlaylistDetail } from './components/PlaylistDetail';
 import { Toast, ToastType } from './components/Toast';
 import { SearchPage } from './components/SearchPage';
-import { TrainingPanel } from './components/TrainingPanel';
 import { NewsPage } from './components/NewsPage';
 import { ConfirmDialog } from './components/ConfirmDialog';
 
@@ -1293,9 +1292,6 @@ function AppContent() {
             onNavigateToPlaylist={handleNavigateToPlaylist}
           />
         );
-
-      case 'training':
-        return <TrainingPanel />;
 
       case 'news':
         return <NewsPage />;
